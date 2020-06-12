@@ -1,7 +1,7 @@
 <template>
-  <div class="main">
-    <!-- 热门话题 -->
-    <div class="frequent-contacts bra">
+  <div ref="wrap">
+    <!-- 常用联系人 -->
+    <div class="frequent-contacts">
       <div class="frequent-contacts-title flex">
         <text class="f28 fw5 c0">常用联系人</text>
         <text class="f24 c153 fw4 pl20 pt10 pb10" @click="frequentContactMoreEvent">全部</text>
@@ -21,7 +21,7 @@
   export default {
     data() {
       return {
-        frequentContactArr:['','','','']
+        frequentContactArr: ['', '', '', '']
       }
     },
     methods: {
@@ -30,20 +30,32 @@
         this.$alert()
       },
       // 常用联系人
-      frequentContactUserEvent(){
+      frequentContactUserEvent() {
         this.$alert()
+      },
+      broadcastWidgetHeight() {
+        let _params = this.$getPageParams();
+        setTimeout(() => {
+          dom.getComponentRect(this.$refs.wrap, (ret) => {
+            var channel = new BroadcastChannel('WidgetsMessage')
+            channel.postMessage({
+              widgetHeight: ret.size.height,
+              id: _params.id
+            });
+            channel.close();
+          });
+        }, 100)
       }
+    },
+    mounted() {
+      this.broadcastWidgetHeight()
     }
   }
 </script>
 
 <style lang="css" src="../css/common.css"></style>
 <style>
-  .main {
-    flex: 1;
-    padding-top: 100px;
-    background-color: #666;
-  }
+  .main {}
 
   .frequent-contacts {
     background-color: #fff;
